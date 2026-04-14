@@ -40,7 +40,7 @@ async function loadUpdates() {
       
       // デザインに合わせて組み立て（日付の後に改行を入れて内容を表示）
 
-htmlContent += `<li>${formattedContent} … ${item.date}</li>`;
+htmlContent += `<li>${formattedContent} … ${item.date}</li><hr>`;
     });
     htmlContent += "</ul>";
 
