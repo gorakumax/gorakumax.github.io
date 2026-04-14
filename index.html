@@ -6,6 +6,23 @@
     <title>くま整体院のご案内と、くま院長の娯楽の部屋</title>
     <link rel="stylesheet" href="/common/style.css">
     <script src="/common/common.js" defer></script>
+
+<!--更新情報用-->
+<style>
+.loader {
+  font-size: 14px;
+  color: #666;
+  animation: pulse 1.5s infinite ease-in-out;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+		</style>
+<!--更新情報用ここまで-->
 </head>
 <body>
 <div id="menu-trigger" onclick="toggleNav()">
@@ -34,7 +51,10 @@
 <main>
     <section id="news">
         <h2>NEWS</h2>
-        <div data-include="/common/news.html">更新情報取得中</div>
+       <!-- <div data-include="/common/news.html">更新情報取得中</div>-->
+<div id="update-info">
+  <span class="loader">情報を取得中...</span>
+</div>
     </section>
 
     <hr>
@@ -123,5 +143,42 @@
     </nav>
     <div data-include="/common/signe.html" class="signe">更新情報取得中</div>
 </footer>
+<script>
+		// 更新情報用先ほどコピーしたウェブアプリのURL
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxlNuwqMJ3IAPcWSHiW2ZemvsSTxx0lGx6Ypc3ZUR1_0P0MpvwgzJ1X8aU4f8tuXuW-PQ/exec";
+
+async function loadUpdates() {
+  const container = document.getElementById('update-info');
+  
+  try {
+    const response = await fetch(`${GAS_URL}?limit=3`);
+    const data = await response.json();
+
+    if (data.length === 0) {
+      container.innerHTML = "<p>更新情報はありません。</p>";
+      return;
+    }
+
+    let htmlContent = "<ul>";
+    data.forEach(item => {
+      // 【ここが重要】改行コード（\n）を HTMLの改行タグ（<br>）に置き換える
+      const formattedContent = item.content.replace(/\n/g, '<br>');
+      
+      // デザインに合わせて組み立て（日付の後に改行を入れて内容を表示）
+
+htmlContent += `<li>${formattedContent} … ${item.date}</li>`;
+    });
+    htmlContent += "</ul>";
+
+    container.innerHTML = htmlContent;
+
+  } catch (error) {
+    console.error("読み込みエラー:", error);
+    container.innerHTML = "<p>情報の取得に失敗しました。</p>";
+  }
+}
+
+window.onload = loadUpdates;
+</script>
 </body>
 </html>

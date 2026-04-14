@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>更新情報管理システム（改行対応版）</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; }
+        .box { border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 20px; background: #f9f9f9; }
+        h2 { margin-top: 0; font-size: 1.2em; color: #2c3e50; }
+        /* textareaのデザイン */
+        textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; resize: vertical; }
+        button { margin-top: 10px; padding: 10px 20px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 4px; }
+        button:disabled { background: #ccc; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 15px 0; border-bottom: 1px solid #eee; }
+        .date { font-weight: bold; color: #34495e; background: #ebf5fb; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; }
+        .content-body { margin-top: 8px; display: block; }
+        .loader { animation: pulse 1.5s infinite; color: #999; }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>新しい更新情報を送る（改行OK）</h2>
+        <form id="update-form">
+            <textarea id="content" placeholder="更新内容を入力...&#13;&#10;Enterで改行できます" required rows="5"></textarea>
+            <button type="submit" id="submit-btn">スプレッドシートへ書き込む</button>
+        </form>
+        <p id="status-msg" style="font-size: 0.9em;"></p>
+    </div>
+
+    <div class="box">
+        <h2>現在の最新3件</h2>
+        <div id="update-info">
+            <span class="loader">情報を取得中...</span>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxlNuwqMJ3IAPcWSHiW2ZemvsSTxx0lGx6Ypc3ZUR1_0P0MpvwgzJ1X8aU4f8tuXuW-PQ/exec";
+
+        async function loadUpdates() {
+            const container = document.getElementById('update-info');
+            try {
+                const response = await fetch(`${GAS_URL}?limit=3`);
+                const data = await response.json();
+                if (data.length === 0) {
+                    container.innerHTML = "データがありません。";
+                    return;
+                }
+                let html = "<ul>";
+                data.forEach(item => {
+                    // 改行をHTML用に変換
+                    const formattedContent = item.content.replace(/\n/g, '<br>');
+                    html += `<li><span class="date">${item.date}</span><span class="content-body">${formattedContent}</span></li>`;
+                });
+                html += "</ul>";
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = "読み込みエラー";
+            }
+        }
+
+        document.getElementById('update-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const msg = document.getElementById('status-msg');
+            const content = document.getElementById('content').value;
+
+            btn.disabled = true;
+            msg.innerText = "送信中...";
+
+            try {
+                await fetch(GAS_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ content: content, date: new Date() })
+                });
+                msg.style.color = "green";
+                msg.innerText = "成功！";
+                document.getElementById('update-form').reset();
+                loadUpdates();
+            } catch (e) {
+                msg.style.color = "red";
+                msg.innerText = "エラーが発生しました";
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.onload = loadUpdates;
+    </script>
+</body>
+</html>
