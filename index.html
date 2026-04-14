@@ -21,6 +21,32 @@
   50% { opacity: 1; }
   100% { opacity: 0.4; }
 }
+.news-title {
+    display: flex;          /* 横並びにする */
+    align-items: baseline;  /* 文字の下揃えを合わせる */
+    justify-content: space-between; /* 両端に振り分ける */
+    border-bottom: 2px solid #333; /* タイトル下の線（お好みで） */
+    padding-bottom: 5px;
+}
+
+.news-log-link {
+    font-size: 0.5em;       /* 文字を小さく */
+    font-weight: normal;    /* 文字を細く */
+}
+
+.news-log-link a {
+    color: #666;            /* 落ち着いたグレー */
+    text-decoration: none;  /* 下線を消す */
+    border: 1px solid #ccc; /* 枠線でボタンっぽく */
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: 0.3s;       /* ふわっと変化させる */
+}
+
+.news-log-link a:hover {
+    background: #666;       /* マウスを乗せた時に反転 */
+    color: #fff;
+}
 		</style>
 <!--更新情報用ここまで-->
 </head>
@@ -50,7 +76,12 @@
 
 <main>
     <section id="news">
-        <h2>NEWS</h2>
+<h2 class="news-title">
+    NEWS
+    <span class="news-log-link">
+        <a href="updatelog.html">更新ログ</a>
+    </span>
+</h2>
        <!-- <div data-include="/common/news.html">更新情報取得中</div>-->
 <div id="update-info">
   <span class="loader">情報を取得中...</span>

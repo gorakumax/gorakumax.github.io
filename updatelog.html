@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html>
-	<head>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>更新情報一覧</title>
-		   <link rel="stylesheet" href="/common/style.css">
+	<link rel="preload" href="/common/style.css" as="style">
+    <link rel="stylesheet" href="/common/style.css">
+    <script src="/common/common.js" defer></script>
+
 		<style>
 .loader {
   font-size: 14px;
@@ -56,6 +61,17 @@ window.onload = loadUpdates;
 </script>
 	</head>
 	<body>
+	<!--サイドメニュータグ-->
+   <div id="menu-trigger" onclick="toggleNav()">
+    <span></span>
+    <span class="menu-text">Menu</span>
+    <span></span>
+</div>
+<nav id="side-nav">
+    <div data-include="topmenubar.html"></div>
+</nav>
+<div id="nav-overlay" onclick="toggleNav()"></div>
+<!--ここまで-->
 	<h1>更新情報ログ</h1>
 <div id="update-info">
   <span class="loader">情報を取得中...</span>
